@@ -1,0 +1,204 @@
+﻿;**********************************************************
+;캐릭터의 변신 후 자칭 구상 설정
+@FIRSTSETTING_CHANGINGCALL_DETAIL, ARG:0, ARG:1
+#FUNCTIONS
+#DIMS 주어
+LOCAL:0 = ARG:1
+LOCAL:1 = 0
+LOCALS = %STRCLEAR()%
+
+PRINTFORML {ARG:1}
+
+;성격을 크게 나눈다
+;그룹1 강기계(強気系), 기가 센 성격
+IF LOCAL:0 == 12 || LOCAL:0 == 20 || LOCAL:0 == 21 || LOCAL:0 == 26 || LOCAL:0 == 27
+	LOCAL:1 = 1
+
+;그룹2 약기계(弱気系), 기가 약한 성격
+ELSEIF LOCAL:0 == 10 || LOCAL:0 == 11 || LOCAL:0 == 18
+	LOCAL:1 = 2
+
+;그룹3 활발계(活発系)
+;원래 여기에 있던 진지함(16번)은 좀 더 어울리는 그룹4로 보냈다
+ELSEIF LOCAL:0 == 13 || LOCAL:0 == 17 || LOCAL:0 == 19 || LOCAL:0 == 23 || LOCAL:0 == 25
+	LOCAL:1 = 3
+	
+;그룹4 얌전함・대범함계
+;원래 여기에 있던 게으름(15번)이 그룹4의 대사랑 안 어울려 보여서 그룹5로 보내줬다
+ELSEIF LOCAL:0 == 14 || LOCAL:0 == 16 || LOCAL:0 == 24
+	LOCAL:1 = 4
+
+;그룹5 과묵함・차분함계
+;원래 여기에 있던 얀데레(21번)가 텐션 떨어지는 말투를 하기에는 좀 그래보여서 그룹1로 보내줬다
+;마찬가지로 고풍적(24번)도 축 늘어지는 말투랑은 잘 안 어울려서 그룹4로 보내줬다
+ELSEIF LOCAL:0 == 15 || LOCAL:0 == 22 || LOCAL:0 == 28
+	LOCAL:1 = 5
+ENDIF
+
+LOCAL:2 = RAND:7
+
+IF LOCAL:2 == 0
+	;원문은 参上, 찾아뵘 이라는 뜻이며 "등장" 이라고 자주 해석된다
+	IF LOCAL:1 == 1 || LOCAL:1 == 3
+		LOCALS = , 도착!
+	ELSE
+		LOCALS = , 도착.
+	ENDIF
+	;LOCALS = , 参上
+	;SIF LOCAL:1 == 1 || LOCAL:1 == 3
+		;LOCALS = (%LOCALS% + ！)
+ELSEIF LOCAL:2 == 1
+	;원문은 見参, 대면(対面)의 높임말이라고 하며, 사무라이가 대결할 때 나오면서 見参！이라 했다고 함
+	IF LOCAL:1 == 1 || LOCAL:1 == 3
+		LOCALS = , 등장!
+	ELSE
+		LOCALS = , 등장.
+	ENDIF
+	;LOCALS = , 見参
+	;SIF LOCAL:1 == 1 || LOCAL:1 == 3
+		;LOCALS = (%LOCALS% + ！)
+ELSEIF LOCAL:2 == 2
+	;원문은 推参, 推して参る 상대가 원하지 않음에도 밀고 간다는 뜻이며, "각오해라" 라고 의역되기도 함
+	IF LOCAL:1 == 1 || LOCAL:1 == 3
+		LOCALS = , 참전!
+	ELSE
+		LOCALS = , 참전.
+	ENDIF
+	;LOCALS = , 推参
+	;SIF LOCAL:1 == 1 || LOCAL:1 == 3
+		;LOCALS = (%LOCALS% + ！)
+ELSEIF LOCAL:2 == 3
+	IF LOCAL:1 == 1 || LOCAL:1 == 3
+		LOCALS = , 준비 완료!
+	ELSE
+		LOCALS = , 준비 완료.
+	ENDIF
+	;LOCALS = , 준비 완료
+	;SIF LOCAL:1 == 1 || LOCAL:1 == 3
+		;LOCALS = (%LOCALS% + ！)
+ELSEIF LOCAL:2 == 4
+	IF LOCAL:1 == 1
+		IF RAND:2 == 0
+			LOCALS = . 자, 간다!
+		ELSE
+			LOCALS = . 자, 갑니다!
+		ENDIF
+	ELSEIF LOCAL:1 == 2
+		SELECTCASE RAND:4
+		CASE 3
+			LOCALS = . ……읏! 간다!
+		CASE 2
+			LOCALS = . ……읏! 갑니다!
+		CASE 1
+			LOCALS = . 후우……! 간다!
+		CASE 0
+			LOCALS = . 후우……! 갑니다!
+		ENDSELECT
+	ELSEIF LOCAL:1 == 3
+		IF RAND:2 == 0
+			LOCALS = . 좋~아, 가즈아ー앗!
+		ELSE
+			LOCALS = , 함께 가 보자고요!
+		ENDIF
+	ELSEIF LOCAL:1 == 4
+		SELECTCASE RAND:5
+		CASE 4
+			LOCALS = . 
+		CASE 3
+			LOCALS = , 준비는 끝났습니다!
+		CASE 2
+			LOCALS = . 그럼, 가보자고!
+		CASE 1
+			LOCALS = . 그럼, 가보죠!
+		CASE 0
+			LOCALS = . 모두, 갑시다!
+		ENDSELECT
+	ELSEIF LOCAL:1 == 5
+		SELECTCASE RAND:4
+		CASE 3
+			LOCALS = . ……갈게요.
+		CASE 2
+			LOCALS = . ……바로 갈게.
+		CASE 1
+			LOCALS = . ……갑니다.
+		CASE 0
+			LOCALS = . 가자아ー앗……
+		ENDSELECT
+	ENDIF
+ELSEIF LOCAL:2 == 5
+	IF LOCAL:1 == 1
+		SELECTCASE RAND:4
+		CASE 3
+			LOCALS = . 지지 않을 거야!
+		CASE 2
+			LOCALS = . 지지 않을 겁니다!
+		CASE 1
+			LOCALS = . 덤벼보시지!
+		CASE 0
+			LOCALS = . 무엇이든 상대해 드리죠!
+		ENDSELECT
+	ELSEIF LOCAL:1 == 2
+		SELECTCASE RAND:4
+		CASE 3
+			LOCALS = . 어쩔 수……없는 거네……!
+		CASE 2
+			LOCALS = . 할 수밖에……없겠군요……!
+		CASE 1
+			LOCALS = . 이 이상은, 용납 못 해……!
+		CASE 0
+			LOCALS = . 이렇게 된 이상, 별수 없겠죠……!
+		ENDSELECT
+	ELSEIF LOCAL:1 == 3
+		SELECTCASE RAND:6
+		CASE 5
+			LOCALS = . 각오하라고!
+		CASE 4
+			LOCALS = . 각오하시죠!
+		CASE 3
+			LOCALS = . 이번에도 이겨내 보이겠어!
+		CASE 2
+			LOCALS = . 반드시 이겨낼 테니까요!
+		CASE 1
+			LOCALS = . 여기서 끝내버리겠어!
+		CASE 0
+			LOCALS = . 끝을 내드리죠!
+		ENDSELECT
+	ELSEIF LOCAL:1 == 4
+		SELECTCASE RAND:6
+		CASE 5
+			LOCALS = . 여기까지다!
+		CASE 4
+			LOCALS = . 여기까지입니다!
+		CASE 3
+			LOCALS = . 준비는 됐어?
+		CASE 2
+			LOCALS = . 준비는 됐겠죠?
+		CASE 1
+			LOCALS = . 봐주지 않겠어!
+		CASE 0
+			LOCALS = . 봐 드리지 않아요!
+		ENDSELECT
+	ELSEIF LOCAL:1 == 5
+		SELECTCASE RAND:6
+		CASE 5
+			LOCALS = . ……맡겨 줘.
+		CASE 4
+			LOCALS = . ……저 왔어요.
+		CASE 3
+			LOCALS = . ……나 왔어.
+		CASE 2
+			LOCALS = . ……빨리 끝내자.
+		CASE 1
+			LOCALS = , 목표를 확인. ……전투에 돌입.
+		CASE 0
+			LOCALS = , ……즉각 섬멸.
+		ENDSELECT
+	ENDIF
+ELSEIF LOCAL:2 == 6
+	IF LOCAL:1 == 1 || LOCAL:1 == 3
+		LOCALS = , 전투 개시!
+	ELSE
+		LOCALS = , 전투 개시.
+	ENDIF
+ENDIF
+RETURNF LOCALS

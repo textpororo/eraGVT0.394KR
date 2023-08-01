@@ -1,0 +1,32 @@
+﻿警告Lv1:_default.config:1行目:System.ArgumentOutOfRangeException:Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+  at System.ThrowHelper.ThrowArgumentOutOfRangeException (System.ExceptionArgument argument, System.ExceptionResource resource) [0x00000] in <00000000000000000000000000000000>:0 
+  at System.ThrowHelper.ThrowArgumentOutOfRangeException () [0x00000] in <00000000000000000000000000000000>:0 
+  at MinorShift.Emuera.ConfigData.loadConfig (System.String confPath, System.Boolean fix) [0x00000] in <00000000000000000000000000000000>:0 
+  at MinorShift.Emuera.ConfigData.LoadConfig () [0x00000] in <00000000000000000000000000000000>:0 
+  at MinorShift.Emuera.Program.Main (System.String[] args) [0x00000] in <00000000000000000000000000000000>:0 
+  at EmueraThread.Work () [0x00000] in <00000000000000000000000000000000>:0 
+  at System.Threading.WaitCallback.Invoke (System.Object state) [0x00000] in <00000000000000000000000000000000>:0 
+  at System.Threading.ContextCallback.Invoke (System.Object state) [0x00000] in <00000000000000000000000000000000>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <00000000000000000000000000000000>:0 
+  at System.Threading.ThreadPoolWorkQueue.Dispatch () [0x00000] in <00000000000000000000000000000000>:0 
+警告Lv1:_fixed.config:1行目:System.ArgumentOutOfRangeException:Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+  at System.ThrowHelper.ThrowArgumentOutOfRangeException (System.ExceptionArgument argument, System.ExceptionResource resource) [0x00000] in <00000000000000000000000000000000>:0 
+  at System.ThrowHelper.ThrowArgumentOutOfRangeException () [0x00000] in <00000000000000000000000000000000>:0 
+  at MinorShift.Emuera.ConfigData.loadConfig (System.String confPath, System.Boolean fix) [0x00000] in <00000000000000000000000000000000>:0 
+  at MinorShift.Emuera.ConfigData.LoadConfig () [0x00000] in <00000000000000000000000000000000>:0 
+  at MinorShift.Emuera.Program.Main (System.String[] args) [0x00000] in <00000000000000000000000000000000>:0 
+  at EmueraThread.Work () [0x00000] in <00000000000000000000000000000000>:0 
+  at System.Threading.WaitCallback.Invoke (System.Object state) [0x00000] in <00000000000000000000000000000000>:0 
+  at System.Threading.ContextCallback.Invoke (System.Object state) [0x00000] in <00000000000000000000000000000000>:0 
+  at System.Threading.ExecutionContext.RunInternal (System.Threading.ExecutionContext executionContext, System.Threading.ContextCallback callback, System.Object state, System.Boolean preserveSyncCtx) [0x00000] in <00000000000000000000000000000000>:0 
+  at System.Threading.ThreadPoolWorkQueue.Dispatch () [0x00000] in <00000000000000000000000000000000>:0 
+해당 게임은 테스트 버전으로, 버그가 보이거나 이상한 부분이 있다면 꼭 관련 커뮤니티에 제보해 주세요.
+警告Lv2:캐릭터 메이킹 관련(완, 초기세트x)/FIRSTSETTING_CHARA_EXP.ERB:304行目:字句解析中に対応する'('のない')'を発見しました
+	역) 우대 환경은 너무 없는 것 같은데 자위 정도는 괜찮겠지
+警告Lv2:캐릭터 메이킹 관련(완, 초기세트x)/FIRSTSETTING_CHARA_EXP.ERB:493行目:解釈できない行です
+				경험 횟수가 없고 생활 환경이 열악하다면 펠라만
+ERBコードに解釈不可能な行があるためEmueraを終了します
+※互換性オプション「解釈不可能な行があっても実行する」により強制的に動作させることができます
+emuera.logにログを出力します

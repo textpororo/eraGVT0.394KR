@@ -1,0 +1,1677 @@
+﻿;캐릭터 프로필 등 크기 설정
+@SIZE_SETTING, ARG
+#DIM 난수치
+#DIM 성장곡선
+#DIM 나이치, 2
+#DIM 실제나이치, 1
+#DIM 신장치, 2
+#DIM 체중치, 2
+#DIM 가슴둘레치, 2
+#DIM 허리둘레치, 2
+#DIM 골반둘레치, 2
+#DIM KEEP_TARGET
+#DIM INPUT_MODE
+#DIM DISPLAY_FLAG
+#DIM CAL_VAR, 15
+#DIM LCOUNT
+#DIM LINE
+#DIM LOCK, 3
+
+LINE = LINECOUNT
+KEEP_TARGET = TARGET
+TARGET = ARG
+DISPLAY_FLAG = 3
+CALL CONVERT_COLORCSTR, ARG
+CALL CONVERT_AGE, ARG
+VARSET LOCK
+
+;CFLAG 등에서 로컬 변수에 기입
+난수치 = CFLAG:ARG:33
+성장곡선 = CFLAG:ARG:34
+실제나이치 = BASE:ARG:실제나이
+
+나이치:0 = BASE:ARG:나이
+신장치:0 = BASE:ARG:신장
+체중치:0 = BASE:ARG:체중
+가슴둘레치:0 = BASE:ARG:가슴둘레
+허리둘레치:0 = BASE:ARG:허리둘레
+골반둘레치:0 = BASE:ARG:골반둘레
+
+나이치:1 = MAXBASE:ARG:나이
+신장치:1 = MAXBASE:ARG:신장
+체중치:1 = MAXBASE:ARG:체중
+가슴둘레치:1 = MAXBASE:ARG:가슴둘레
+허리둘레치:1 = MAXBASE:ARG:허리둘레
+골반둘레치:1 = MAXBASE:ARG:골반둘레
+
+IF TALENT:ARG:변신능력 < 1
+	나이치:1 = -1
+	CLEARBIT DISPLAY_FLAG, 1
+ENDIF
+SIF 나이치:0 == 나이치:1 && TALENT_CHANGE_F(ARG) == 0 && 신장치:0 == 신장치:1 && 체중치:0 == 체중치:1 && 가슴둘레치:0 == 가슴둘레치:1 && 허리둘레치:0 == 허리둘레치:1 && 골반둘레치:0 == 골반둘레치:1 && CSTR:ARG:13 == CSTR:ARG:14 && CSTR:ARG:30 == CSTR:ARG:31 && CSTR:ARG:32 == CSTR:ARG:34 && CSTR:ARG:33 == CSTR:ARG:35 && CSTR:ARG:36 == CSTR:ARG:37
+	나이치:1 = -1
+
+INPUT_MODE = -1
+
+DO
+	BASE:ARG:나이 = 나이치:0
+	MAXBASE:ARG:나이 = 나이치:1
+	BASE:ARG:실제나이 = 실제나이치
+
+	CALL LB
+	DRAWLINE
+	PRINTPLAINFORM ■　%NAME% 의 프로필 설정  (실제 나이{BASE:ARG:실제나이, 7} 세)　　
+	IF INPUT_MODE % 10 == 0 || INPUT_MODE == 2
+		SETCOLOR 96, 96, 96
+		PRINTPLAIN [50] 실제 나이 변경
+		PRINTL
+	ELSE
+		PRINTL [50] 실제 나이 변경
+	ENDIF
+	PRINTL
+	IF GETBIT(DISPLAY_FLAG, 0)
+		CALL GENERATE_CHAR_SIZE, ARG, 0
+		신장치:0 = RESULT:2
+		체중치:0 = RESULT:3
+		가슴둘레치:0 = RESULT:4
+		허리둘레치:0 = RESULT:5
+		골반둘레치:0 = RESULT:6
+	ENDIF
+
+	IF 나이치:1 >= 0 && GETBIT(DISPLAY_FLAG, 1)
+		CALL GENERATE_CHAR_SIZE, ARG, 1
+		신장치:1 = RESULT:2
+		체중치:1 = RESULT:3
+		가슴둘레치:1 = RESULT:4
+		허리둘레치:1 = RESULT:5
+		골반둘레치:1 = RESULT:6
+	ENDIF
+
+	IF GETBIT(DISPLAY_FLAG, 3)
+		VARSET LCOUNT
+		DO
+			SIF CFLAG:ARG:34 == 0
+				CALL GENERATE_BODYLINE, ARG
+			CALL GENERATE_CHAR_SIZE, ARG, 0
+			CAL_VAR:2 = LIMIT(RESULT:2, CAL_VAR:0, CAL_VAR:1 + (CAL_VAR:1 == 0) * 9999)
+			CAL_VAR:5 = LIMIT(RESULT:3, CAL_VAR:3, CAL_VAR:4 + (CAL_VAR:4 == 0) * 9999)
+			CAL_VAR:8 = LIMIT(RESULT:4, CAL_VAR:6, CAL_VAR:7 + (CAL_VAR:7 == 0) * 9999)
+			CAL_VAR:11 = LIMIT(RESULT:5, CAL_VAR:9, CAL_VAR:10 + (CAL_VAR:10 == 0) * 9999)
+			CAL_VAR:14 = LIMIT(RESULT:6, CAL_VAR:12, CAL_VAR:13 + (CAL_VAR:13 == 0) * 9999)
+			SIF CAL_VAR:2 ==RESULT:2 && CAL_VAR:5 == RESULT:3 && CAL_VAR:8 == RESULT:4 && CAL_VAR:11 == RESULT:5 && CAL_VAR:14 == RESULT:6
+				BREAK
+			LCOUNT += 1
+		LOOP LCOUNT < 5000
+		IF LCOUNT == 5000
+		ELSE
+			신장치:0 = RESULT:2
+			체중치:0 = RESULT:3
+			가슴둘레치:0 = RESULT:4
+			허리둘레치:0 = RESULT:5
+			골반둘레치:0 = RESULT:6
+
+			IF 나이치:1 >= 0
+				CALL GENERATE_CHAR_SIZE, ARG, 1
+				신장치:1 = RESULT:2
+				체중치:1 = RESULT:3
+				가슴둘레치:1 = RESULT:4
+				허리둘레치:1 = RESULT:5
+				골반둘레치:1 = RESULT:6
+			ENDIF
+		ENDIF
+	ENDIF
+
+	FONTBOLD
+	SIF INPUT_MODE % 10 == 0 || INPUT_MODE == 2
+		SETCOLOR 96, 96, 96
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	PRINT 　　　　　　　　　 평상시　　　　　　　　　　　　　
+
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 255, 240, 255
+	IF TALENT:ARG:변신능력 == 1
+		PRINTL 변신 시
+	ELSE
+		PRINTL 
+	ENDIF
+	FONTREGULAR
+
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	PRINTPLAIN 　　외관　　　　　
+	IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		PRINTFORM {나이치:0, 7} 세　[ 0]
+	ELSE
+		PRINTPLAINFORM {나이치:0, 7} 세　 [ 0]
+	ENDIF
+	PRINTPLAIN 　　　　　　　　　
+
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 255, 240, 255
+	IF 나이치:1 >= 0
+		IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			PRINTFORM {나이치:1, 7} 세　[10]　
+			RESETCOLOR
+		ELSE
+			PRINTPLAINFORM {나이치:1, 7} 세　[10]　
+		ENDIF
+		IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			PRINT [20]　변화하지 않는다
+		ELSE
+			PRINTPLAIN [20]　변화하지 않는다
+		ENDIF
+	ELSEIF TALENT:ARG:변신능력 == 1
+		IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			RESETCOLOR
+			PRINT 　　　　　　　　　[20]　변화한다
+		ELSE
+			PRINTPLAIN 　　　　　　　　　[20]　변화한다
+		ENDIF
+	ENDIF
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		RESETCOLOR
+	PRINTL
+
+	PRINT 　　신장　　　　　
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	PRINTFORM {신장치:0 / 10, 5}.{신장치:0 % 10} cm
+	PRINTPLAIN 　
+	SIF NO:ARG != 0
+		SETCOLOR 96,96,96
+	IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2 && NO:ARG == 0
+		PRINT [ 1]　
+	ELSE
+		PRINTPLAIN [ 1]　
+	ENDIF
+	IF CHARATALENT_F(ARG,0,"왜소함")
+		PRINT [왜소함]
+	ELSEIF CHARATALENT_F(ARG,0,"장신")
+		PRINT [장신]
+	ELSE
+		PRINT [ ― ]
+	ENDIF
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	PRINTPLAIN 　　　　
+
+	IF 나이치:1 >= 0
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+		PRINTFORM 　{신장치:1 / 10, 5}.{신장치:1 % 10} cm
+		PRINTPLAIN 　
+		SIF NO:ARG != 0
+			SETCOLOR 96,96,96
+		IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2 && NO:ARG == 0
+			PRINT [11]　
+		ELSE
+			PRINTPLAIN [11]　
+		ENDIF
+		IF CHARATALENT_F(ARG,1,"왜소함")
+			PRINT [왜소함]
+		ELSEIF CHARATALENT_F(ARG,1,"장신")
+			PRINT [장신]
+		ELSE
+			PRINT [ ― ]
+		ENDIF
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+	ENDIF
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		RESETCOLOR
+	PRINTL
+
+	PRINT 　　체중　　　　　
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	PRINTFORM {체중치:0 / 10, 5}.{체중치:0 % 10} kg
+
+	IF 나이치:1 >= 0
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+		PRINTFORM 　　　　　　　　　　　　{체중치:1 / 10, 5}.{체중치:1 % 10} kg
+	ENDIF
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		RESETCOLOR
+	PRINTL
+	PRINTPLAIN 　　　　　　　　　　　　　　　
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	SIF NO:ARG != 0
+		SETCOLOR 96,96,96
+	IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2 && NO:ARG == 0
+		PRINT [ 2]　
+	ELSE
+		PRINTPLAIN [ 2]　
+	ENDIF
+	IF CHARATALENT_F(ARG,0,"남자")
+		PRINT [ 남 ]
+	ELSE
+		PRINT [ 여 ]
+	ENDIF
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	IF 나이치:1 >= 0
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+		SIF NO:ARG != 0
+			SETCOLOR 96,96,96
+		PRINTPLAIN 　　　　　　　　　　　
+		IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2 && NO:ARG == 0
+			PRINT [12]　
+		ELSE
+			PRINTPLAIN [12]　
+		ENDIF
+		IF CHARATALENT_F(ARG,1,"남자")
+			PRINT [ 남 ]
+		ELSE
+			PRINT [ 여 ]
+		ENDIF
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+	ENDIF
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		RESETCOLOR
+	PRINTL
+
+	PRINT 　　 Ｂ 　　　　　
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	PRINTFORM \@가슴둘레치:0 > 0 ? {가슴둘레치:0 / 10, 5}.{가슴둘레치:0 % 10} # 　 　―\@ cm
+	PRINTPLAIN 　
+	SIF NO:ARG != 0
+		SETCOLOR 96,96,96
+	IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2 && NO:ARG == 0
+		PRINT [ 3]　
+	ELSE
+		PRINTPLAIN [ 3]　
+	ENDIF
+	IF CHARATALENT_F(ARG,0,"절벽")
+		PRINT [절벽]
+	ELSEIF CHARATALENT_F(ARG,0,"빈유")
+		PRINT [빈유]
+	ELSEIF CHARATALENT_F(ARG,0,"기유")
+		PRINT [기유]
+	ELSEIF CHARATALENT_F(ARG,0,"마유")
+		PRINT [마유]
+	ELSEIF CHARATALENT_F(ARG,0,"초유")
+		PRINT [초유]
+	ELSEIF CHARATALENT_F(ARG,0,"폭유")
+		PRINT [폭유]
+	ELSEIF CHARATALENT_F(ARG,0,"거유")
+		PRINT [거유]
+	ELSE
+		PRINT [ ― ]
+	ENDIF
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	PRINTPLAIN  
+	CALL TOP_UNDER, ARG, 0
+	CALL CUP_SIZE, RESULT
+	RESULTS = (%RESULTS%)
+	PRINTFORM %RESULTS, 5, LEFT%　　
+
+	IF 나이치:1 >= 0
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+		PRINTFORM \@가슴둘레치:1 > 0 ? {가슴둘레치:1 / 10, 5}.{가슴둘레치:1 % 10} # 　 　―\@ cm
+		PRINTPLAIN 　
+		SIF NO:ARG != 0
+			SETCOLOR 96,96,96
+		IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2 && NO:ARG == 0
+			PRINT [13]　
+		ELSE
+			PRINTPLAIN [13]　
+		ENDIF
+		IF CHARATALENT_F(ARG,1,"절벽")
+			PRINT [절벽]
+		ELSEIF CHARATALENT_F(ARG,1,"빈유")
+			PRINT [빈유]
+		ELSEIF CHARATALENT_F(ARG,1,"기유")
+			PRINT [기유]
+		ELSEIF CHARATALENT_F(ARG,1,"마유")
+			PRINT [마유]
+		ELSEIF CHARATALENT_F(ARG,1,"초유")
+			PRINT [초유]
+		ELSEIF CHARATALENT_F(ARG,1,"폭유")
+			PRINT [폭유]
+		ELSEIF CHARATALENT_F(ARG,1,"거유")
+			PRINT [거유]
+		ELSE
+			PRINT [ ― ]
+		ENDIF
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+		PRINTPLAIN  
+		CALL TOP_UNDER, ARG, 1
+		CALL CUP_SIZE, RESULT
+		RESULTS = (%RESULTS%)
+		PRINTFORM %RESULTS, 5, LEFT%
+	ENDIF
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		RESETCOLOR
+	PRINTL
+
+	PRINT 　　 Ｗ 　　　　　
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	PRINTFORM \@허리둘레치:0 > 0 ? {허리둘레치:0 / 10, 5}.{허리둘레치:0 % 10} # 　 　―\@ cm
+
+	IF 나이치:1 >= 0
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+		PRINTFORM 　　　　　　　　　　　　\@허리둘레치:1 > 0 ? {허리둘레치:1 / 10, 5}.{허리둘레치:1 % 10} # 　 　―\@ cm
+	ENDIF
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		RESETCOLOR
+	PRINTL
+
+	PRINT 　　 Ｈ 　　　　　
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	LOCALS = 
+	SIF CHARATALENT_F(ARG,0,"순산형")
+		LOCALS = [순산형]
+	SIF CHARATALENT_F(ARG,0,"포동포동")
+		LOCALS = [포동포동]
+	SIF CHARATALENT_F(ARG,0,"유아배")
+		LOCALS = [유아배]
+	SIF CHARATALENT_F(ARG,0,"날씬함")
+		LOCALS = [날씬함]
+	PRINTFORM \@골반둘레치:0 > 0 ? {골반둘레치:0 / 10, 5}.{골반둘레치:0 % 10} # 　 　―\@ cm
+	PRINTPLAIN 　
+	LOCALS = [ ― ]
+	SIF CHARATALENT_F(ARG,0,"순산형")
+		LOCALS = [순산형]
+	SIF CHARATALENT_F(ARG,0,"포동포동")
+		LOCALS = [포동포동]
+	SIF CHARATALENT_F(ARG,0,"유아배")
+		LOCALS = [유아배]
+	SIF CHARATALENT_F(ARG,0,"날씬함")
+		LOCALS = [날씬함]
+	SIF NO:ARG != 0
+		SETCOLOR 96,96,96
+	IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2 && NO:ARG == 0
+		PRINTFORM [ 4]　%LOCALS, 12, LEFT%
+	ELSE
+		PRINTPLAINFORM [ 4]　%LOCALS, 12, LEFT%
+	ENDIF
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	IF 나이치:1 >= 0
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+		PRINTPLAINFORM 　　\@골반둘레치:1 > 0 ? {골반둘레치:1 / 10, 5}.{골반둘레치:1 % 10} # 　 　―\@ cm
+		PRINTPLAIN 　
+		LOCALS = [ ― ]
+		SIF CHARATALENT_F(ARG,1,"순산형")
+			LOCALS = [순산형]
+		SIF CHARATALENT_F(ARG,1,"포동포동")
+			LOCALS = [포동포동]
+		SIF CHARATALENT_F(ARG,1,"유아배")
+			LOCALS = [유아배]
+		SIF CHARATALENT_F(ARG,1,"날씬함")
+			LOCALS = [날씬함]
+		SIF NO:ARG != 0
+			SETCOLOR 96,96,96
+		IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2 && NO:ARG == 0
+			PRINTFORM [14]　%LOCALS, 12, LEFT%
+		ELSE
+			PRINTPLAINFORM [14]　%LOCALS, 12, LEFT%
+		ENDIF
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+	ENDIF
+	IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		RESETCOLOR
+		PRINTL
+		PRINTL 　　　　　　　　　　　　　　　　　　　　　　　　오토 롤러　[30]　[40]　재생성
+	ELSE
+		PRINTL
+		PRINTPLAIN 　　　　　　　　　　　　　　　　　　　　　　　　오토 롤러　[30]　[40]　재생성
+		PRINTL
+	ENDIF
+
+	PRINTL 　헤어스타일
+	PRINTPLAIN 　　앞머리　　
+	IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 240, 240
+		PRINTFORML %CSTR:ARG:12, 16%　[ 5]
+		RESETCOLOR
+	ELSE
+		PRINTPLAINFORM %CSTR:ARG:12, 16%　[ 5]
+		PRINTL
+	ENDIF
+
+	PRINTPLAIN 　　뒷머리　　
+	IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+		PRINTFORM %CSTR:ARG:13, 16%　[15]
+		SETCOLOR 255, 240, 255
+	ELSE
+		PRINTPLAINFORM %CSTR:ARG:13, 16%　[15]
+	ENDIF
+	IF 나이치:1 >= 0
+		PRINTPLAIN 　　　　　　
+		IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			PRINTFORM %CSTR:ARG:14, 16%　[25]　
+		ELSE
+			PRINTPLAINFORM %CSTR:ARG:14, 16%　[25]　
+		ENDIF
+	ELSE
+		PRINTPLAIN 　　　　　　　　　　　　　　　　　　
+	ENDIF
+	IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		RESETCOLOR
+		PRINT [35]　랜덤
+	ELSE
+		PRINTPLAIN [35]　랜덤
+	ENDIF
+	PRINTL
+	PRINTL
+
+	PRINTPLAIN 　　눈매　
+	IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 240, 240
+		PRINTFORML %CSTR:ARG:18, 16%　[45]
+		RESETCOLOR
+	ELSE
+		PRINTPLAINFORM %CSTR:ARG:18, 16%　[45]
+		PRINTL
+	ENDIF
+	PRINTL
+
+;머리색
+	PRINTPLAIN 　 머리색　　　　　　 
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	PRINT 　[
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		CALL SETCOLOR_BY_STR, CSTR:ARG:30
+	PRINT ■
+	IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+		PRINT ]　[ 6]
+	ELSE
+		PRINTPLAIN ]　[ 6]
+	ENDIF
+;변신 시의 머리색
+	IF 나이치:1 >= 0
+		PRINTPLAIN 　　　　　　　　　　　
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+		PRINT 　[
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			CALL SETCOLOR_BY_STR, CSTR:ARG:31
+		PRINT ■
+		IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+			PRINT ]　[16]
+		ELSE
+			PRINTPLAIN ]　[16]
+		ENDIF
+	ENDIF
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		RESETCOLOR
+	PRINTL 
+
+	PRINTPLAIN 　 눈동자 색 
+;오른쪽 눈
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	PRINT 　[
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		CALL SETCOLOR_BY_STR, CSTR:ARG:32
+	PRINT ■
+	IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+		PRINT ]　[ 7]
+	ELSE
+		PRINTPLAIN ]　[ 7]
+	ENDIF
+
+;왼쪽 눈
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	PRINT 　[
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		CALL SETCOLOR_BY_STR, CSTR:ARG:33
+	PRINT ■
+	IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+		PRINT ]　[ 8]
+	ELSE
+		PRINTPLAIN ]　[ 8]
+	ENDIF
+
+;변신 시의 눈동자 색
+	IF 나이치:1 >= 0
+		PRINTPLAIN 　　　　　
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+		PRINT 　[
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			CALL SETCOLOR_BY_STR, CSTR:ARG:34
+		PRINT ■
+		IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+			PRINT ]　[17]
+		ELSE
+			PRINTPLAIN ]　[17]
+		ENDIF
+		PRINT 　[
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			CALL SETCOLOR_BY_STR, CSTR:ARG:35
+		PRINT ■
+		IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+			PRINT ]　[18]
+		ELSE
+			PRINTPLAIN ]　[18]
+		ENDIF
+	ENDIF
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		RESETCOLOR
+	PRINTL 
+
+	PRINTPLAIN 　 피부색　　　　　　 
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+	PRINT 　[
+	SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		CALL SETCOLOR_BY_STR, CSTR:ARG:36
+	PRINT ■
+	IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+		SETCOLOR 240, 255, 255
+		PRINT ]　[ 9]
+	ELSE
+		PRINTPLAIN ]　[ 9]
+	ENDIF
+
+;변신 시의 피부색
+	IF 나이치:1 >= 0
+		PRINTPLAIN 　　　　　　　　　　　
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+		PRINT 　[
+		SIF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			CALL SETCOLOR_BY_STR, CSTR:ARG:37
+		PRINT ■
+		IF INPUT_MODE % 10 != 0 && INPUT_MODE != 2
+			SETCOLOR 255, 240, 255
+			PRINT ]　[19]  
+		ELSE
+			PRINTPLAIN ]　[19]  
+		ENDIF
+	ELSE
+		PRINTPLAIN 　　　　　　　　　　　              
+	ENDIF
+	SIF INPUT_MODE % 10 != 0
+		RESETCOLOR
+	PRINTL
+
+	DRAWLINE
+	IF INPUT_MODE % 10 == 0 && INPUT_MODE < 1000
+		FONTBOLD
+		SIF INPUT_MODE < 10
+			SETCOLOR 240, 255, 255
+		SIF INPUT_MODE >= 10
+			SETCOLOR 255, 240, 255
+		PRINT 　　나이치 설정  (
+		IF INPUT_MODE == 0
+			PRINT 평상시)
+		ELSE
+			PRINT 변신 시)
+		ENDIF
+		FONTREGULAR
+		SIF 실제나이치 != 나이치:(INPUT_MODE != 0)
+			PRINTFORM 　　　실제 나이：{실제나이치} 세
+		RESETCOLOR
+		FOR LOCAL, 10, 30
+			IF LOCAL % 5 == 0
+				PRINTL 
+				PRINT 　　　
+			ENDIF
+			PRINTFORM [{LOCAL, 2}]　{LOCAL, 2} 세　　
+		NEXT
+		PRINTL
+		PRINTL
+	ELSEIF INPUT_MODE == 2
+		FONTBOLD
+		PRINT 　　실제 나이 입력
+		FONTREGULAR
+		FOR LOCAL, 10, 30
+			IF LOCAL % 5 == 0
+				PRINTL 
+				PRINT 　　　
+			ENDIF
+			PRINTFORM [{LOCAL, 2}]　{LOCAL, 2} 세　　
+		NEXT
+		PRINTL
+		PRINTL
+	ELSEIF INPUT_MODE == 5
+		FONTBOLD
+		PRINT 　　앞머리 설정
+		FONTREGULAR
+		FOR LOCAL,0,9
+			IF LOCAL % 3 == 0
+				PRINTL 
+				PRINT 　　　
+			ENDIF
+			PRINTFORM  [{100 + LOCAL}] %STR:(30000 + LOCAL), 16, LEFT%
+		NEXT
+		PRINTL
+		PRINTL
+		PRINTL
+	ELSEIF INPUT_MODE == 15 || INPUT_MODE == 25
+		FONTBOLD
+		SIF INPUT_MODE == 15
+			SETCOLOR 240, 255, 255
+		SIF INPUT_MODE == 25
+			SETCOLOR 255, 240, 255
+		PRINT 　　뒷머리 설정  (
+		IF INPUT_MODE == 15
+			PRINT 평상시)
+		ELSE
+			PRINT 변신 시)
+		ENDIF
+		FONTREGULAR
+		RESETCOLOR
+		FOR LOCAL,0,15
+			IF LOCAL % 3 == 0
+				PRINTL 
+				PRINT 　　　
+			ENDIF
+			PRINTFORM  [{200 + INPUT_MODE / 20 * 50 + LOCAL}] %STR:(30100 + LOCAL), 16, LEFT%
+		NEXT
+		PRINTL
+	ELSEIF INPUT_MODE == 45
+		FONTBOLD
+		PRINT 　　눈매 설정
+		FONTREGULAR
+		FOR LOCAL,0,14
+			IF LOCAL % 3 == 0
+				PRINTL 
+				PRINT 　　　
+			ENDIF
+			PRINTFORM  [{300 + LOCAL}] %STR:(30200 + LOCAL), 16, LEFT%
+		NEXT
+		PRINTL
+	ELSEIF INPUT_MODE % 10 >= 6 && INPUT_MODE % 10 < 9
+		FONTBOLD
+		IF INPUT_MODE % 10 == 6
+			PRINTL 　　머리색 설정
+			FONTREGULAR
+			
+			SETCOLOR 240, 255, 255
+			PRINTL 　　　[600] 평상시 (팔레트에서 고른다)
+			RESETCOLOR
+		ELSEIF INPUT_MODE % 10 == 7 || INPUT_MODE % 10 == 8
+			SIF INPUT_MODE < 10
+				SETCOLOR 240, 255, 255
+			SIF INPUT_MODE >= 10
+				SETCOLOR 255, 240, 255
+			PRINT 　　눈동자 색 설정  (
+			IF INPUT_MODE < 10
+				PRINTL 평상시)
+			ELSE
+				PRINTL 변신 시)
+			ENDIF
+			RESETCOLOR
+			FONTREGULAR
+			
+			PRINTFORML 　　　[{700 + INPUT_MODE / 10 * 100}] 오른쪽 눈 (팔레트에서 고른다)
+		ENDIF
+		IF INPUT_MODE == 6 || INPUT_MODE == 16
+			LOCAL = 600
+		ELSEIF INPUT_MODE == 7 || INPUT_MODE == 8
+			LOCAL = 700
+		ELSEIF INPUT_MODE == 17 || INPUT_MODE == 18
+			LOCAL = 800
+		ELSEIF INPUT_MODE == 9 || INPUT_MODE == 19
+			LOCAL = 900
+		ENDIF
+		PRINT 　　　　　　 프리셋：　　[
+		CALL SETCOLOR_BY_STR, "빨강"
+		PRINTBUTTON "■",LOCAL + 1
+		RESETCOLOR
+		PRINT ][
+		CALL SETCOLOR_BY_STR, "초록"
+		PRINTBUTTON "■",LOCAL + 2
+		RESETCOLOR
+		PRINT ][
+		CALL SETCOLOR_BY_STR, "파랑"
+		PRINTBUTTON "■",LOCAL + 3
+		RESETCOLOR
+		PRINT ][
+		CALL SETCOLOR_BY_STR, "금색"
+		PRINTBUTTON "■",LOCAL + 4
+		RESETCOLOR
+		PRINT ][
+		CALL SETCOLOR_BY_STR, "보라"
+		PRINTBUTTON "■",LOCAL + 5
+		RESETCOLOR
+		PRINT ][
+		CALL SETCOLOR_BY_STR, "주황"
+		PRINTBUTTON "■",LOCAL + 6
+		RESETCOLOR
+		PRINT ][
+		CALL SETCOLOR_BY_STR, "분홍"
+		PRINTBUTTON "■",LOCAL + 7
+		RESETCOLOR
+		PRINT ][
+		CALL SETCOLOR_BY_STR, "은색"
+		PRINTBUTTON "■",LOCAL + 8
+		RESETCOLOR
+		PRINT ][
+		CALL SETCOLOR_BY_STR, "다색"
+		PRINTBUTTON "■",LOCAL + 9
+		RESETCOLOR
+		PRINT ][
+		CALL SETCOLOR_BY_STR, "검정"
+		PRINTBUTTON "■",LOCAL + 10
+		RESETCOLOR
+		PRINT ]
+
+		IF INPUT_MODE == 7 || INPUT_MODE == 8
+			PRINT 　　　　[
+			CALL SETCOLOR_BY_STR, CSTR:ARG:33
+			PRINTBUTTON "■",748
+			RESETCOLOR
+			PRINT ]
+			IF 나이치:1 >= 0
+				PRINT [
+				CALL SETCOLOR_BY_STR, CSTR:ARG:34
+				PRINTBUTTON "■",749
+				RESETCOLOR
+				PRINT ]
+			ENDIF
+			PRINT (왼쪽 눈 색깔에 맞춘다)
+		ELSEIF INPUT_MODE == 17 || INPUT_MODE == 18
+			PRINT 　　　　[
+			CALL SETCOLOR_BY_STR, CSTR:ARG:35
+			PRINTBUTTON "■",848
+			RESETCOLOR
+			PRINT ][
+			CALL SETCOLOR_BY_STR, CSTR:ARG:32
+			PRINTBUTTON "■",849
+			RESETCOLOR
+			PRINT ]
+			PRINT (왼쪽 눈 색깔에 맞춘다)
+		ELSEIF 나이치:1 >= 0
+			PRINT 　　　　　　[
+			CALL SETCOLOR_BY_STR, CSTR:ARG:31
+			PRINTBUTTON "■",649
+			RESETCOLOR
+			PRINT ]
+		ENDIF
+		PRINTL 
+
+		IF 나이치:1 >= 0 && INPUT_MODE % 10 == 6
+			SETCOLOR 255, 240, 255
+			PRINT 　　　[650] 변신 시 (팔레트에서 고른다)
+			RESETCOLOR
+		ELSEIF INPUT_MODE % 10 == 7 || INPUT_MODE % 10 == 8
+			PRINTFORM 　　　[{750 + INPUT_MODE / 10 * 100}] 왼쪽 눈  (팔레트에서 고른다)
+		ENDIF
+		PRINTL 
+
+		IF 나이치:1 >= 0 || INPUT_MODE % 10 == 7 || INPUT_MODE % 10 == 8
+			PRINT 　　　　　　 프리셋：　　[
+			CALL SETCOLOR_BY_STR, "빨강"
+			PRINTBUTTON "■",LOCAL + 51
+			RESETCOLOR
+			PRINT ][
+			CALL SETCOLOR_BY_STR, "초록"
+			PRINTBUTTON "■",LOCAL + 52
+			RESETCOLOR
+			PRINT ][
+			CALL SETCOLOR_BY_STR, "파랑"
+			PRINTBUTTON "■",LOCAL + 53
+			RESETCOLOR
+			PRINT ][
+			CALL SETCOLOR_BY_STR, "금색"
+			PRINTBUTTON "■",LOCAL + 54
+			RESETCOLOR
+			PRINT ][
+			CALL SETCOLOR_BY_STR, "보라"
+			PRINTBUTTON "■",LOCAL + 55
+			RESETCOLOR
+			PRINT ][
+			CALL SETCOLOR_BY_STR, "주황"
+			PRINTBUTTON "■",LOCAL + 56
+			RESETCOLOR
+			PRINT ][
+			CALL SETCOLOR_BY_STR, "분홍"
+			PRINTBUTTON "■",LOCAL + 57
+			RESETCOLOR
+			PRINT ][
+			CALL SETCOLOR_BY_STR, "은색"
+			PRINTBUTTON "■",LOCAL + 58
+			RESETCOLOR
+			PRINT ][
+			CALL SETCOLOR_BY_STR, "다색"
+			PRINTBUTTON "■",LOCAL + 59
+			RESETCOLOR
+			PRINT ][
+			CALL SETCOLOR_BY_STR, "검정"
+			PRINTBUTTON "■",LOCAL + 60
+			RESETCOLOR
+			PRINT ]
+
+			IF INPUT_MODE == 7 || INPUT_MODE == 8
+				PRINT 　　　　[
+				CALL SETCOLOR_BY_STR, CSTR:ARG:32
+				PRINTBUTTON "■",798
+				RESETCOLOR
+				PRINT ]
+				IF 나이치:1 >= 0
+					PRINT [
+					CALL SETCOLOR_BY_STR, CSTR:ARG:35
+					PRINTBUTTON "■",799
+					RESETCOLOR
+					PRINT ]
+				ENDIF
+				PRINT (오른쪽 눈 색깔에 맞춘다)
+			ELSEIF INPUT_MODE == 17 || INPUT_MODE == 18
+				PRINT 　　　　[
+				CALL SETCOLOR_BY_STR, CSTR:ARG:34
+				PRINTBUTTON "■",898
+				RESETCOLOR
+				PRINT ][
+				CALL SETCOLOR_BY_STR, CSTR:ARG:33
+				PRINTBUTTON "■",899
+				RESETCOLOR
+				PRINT ]
+				PRINT (오른쪽 눈 색깔에 맞춘다)
+			ELSE
+				PRINT 　　　　　　[
+				CALL SETCOLOR_BY_STR, CSTR:ARG:30
+				PRINTBUTTON "■",699
+				RESETCOLOR
+				PRINT ]
+			ENDIF
+		ENDIF
+		PRINTL 
+		PRINTL 
+	ELSEIF INPUT_MODE % 10 == 9
+		FONTBOLD
+		PRINTL 　　피부색 설정
+		FONTREGULAR
+		SETCOLOR 240, 255, 255
+		PRINTL 　　　평상시
+		RESETCOLOR
+		PRINT 　　　　　　 프리셋：　　[
+		CALL SETCOLOR_BY_STR, "백색"
+		PRINTBUTTON "■",900
+		RESETCOLOR
+		PRINT ][
+		CALL SETCOLOR_BY_STR, "살구색"
+		PRINTBUTTON "■",901
+		RESETCOLOR
+		PRINT ][
+		CALL SETCOLOR_BY_STR, "갈색"
+		PRINTBUTTON "■",902
+		RESETCOLOR
+		PRINT ][
+		CALL SETCOLOR_BY_STR, "검정"
+		PRINTBUTTON "■",903
+		RESETCOLOR
+		PRINTL ]
+		IF 나이치:1 >= 0
+			SETCOLOR 255, 240, 255
+			PRINTL 　　　변신 시
+			RESETCOLOR
+			PRINT 　　　　　　 프리셋：　　[
+			CALL SETCOLOR_BY_STR, "백색"
+			PRINTBUTTON "■",950
+			RESETCOLOR
+			PRINT ][
+			CALL SETCOLOR_BY_STR, "살구색"
+			PRINTBUTTON "■",951
+			RESETCOLOR
+			PRINT ][
+			CALL SETCOLOR_BY_STR, "갈색"
+			PRINTBUTTON "■",952
+			RESETCOLOR
+			PRINT ][
+			CALL SETCOLOR_BY_STR, "검정"
+			PRINTBUTTON "■",953
+			RESETCOLOR
+			PRINTL ]
+		ELSE
+			RESETCOLOR
+			PRINTL
+			PRINTL
+		ENDIF
+		PRINTL
+	ELSEIF INPUT_MODE == 1
+		PRINTPLAIN 　　오토 롤러 설정　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+		PRINT [1000]　모두 해제
+		PRINTL 
+		PRINTFORM 　　　신장 성장률 난수　　
+		PRINTPLAIN ：
+		PRINTFORM [1100] {CFLAG:ARG:33 % 11, 5}({TALENT:ARG:신장성장률난수, 5})
+		PRINTPLAIN 　　　　
+		PRINTFORM 　　　신장 보정 난수　　
+		PRINTPLAIN ：
+		PRINTFORM [1200] {CFLAG:ARG:33 % 31, 5}({TALENT:ARG:신장보정난수, 5})
+		PRINTL 
+
+		PRINTFORM 　　　체중 난수　　　　　
+		PRINTPLAIN ：
+		PRINTFORM [1300] {CFLAG:ARG:33 % 59, 5}({TALENT:ARG:체중난수, 5})
+		PRINTPLAIN 　　　　
+		PRINTFORM 　　　허리 둘레 난수　　
+		PRINTPLAIN ：
+		PRINTFORM [1400] {CFLAG:ARG:33 % 15, 5}({TALENT:ARG:허리둘레난수, 5})
+		PRINTL 
+
+		PRINTFORM 　　　골반 둘레 난수　　　
+		PRINTPLAIN ：
+		PRINTFORM [1500] {CFLAG:ARG:33 % 16, 5}({TALENT:ARG:골반둘레난수, 5})
+		PRINTPLAIN 　　　　
+		PRINTFORM 　　　언더 난수　　　　　
+		PRINTPLAIN ：
+		PRINTFORM [1600] {CFLAG:ARG:33 % 13, 5}({TALENT:ARG:언더난수, 5})
+		PRINTL 
+
+		PRINTFORM 　　　가슴 탄력 난수　　　
+		PRINTPLAIN ：
+		PRINTFORM [1700] {CFLAG:ARG:33 % 23, 5}({TALENT:ARG:가슴탄력난수, 5})
+		PRINTPLAIN 　　　　
+		PRINTFORM 　　　가슴 성장률 난수　　
+		PRINTPLAIN ：
+		PRINTFORM [1800] {CFLAG:ARG:33 % 7, 5}({TALENT:ARG:가슴성장률난수, 5})
+		PRINTL 
+		PRINTFORM 　　　가슴 사이즈 보정 난수
+		PRINTPLAIN ：
+		PRINTFORM [1900] {CFLAG:ARG:33 % 53, 5}({TALENT:ARG:가슴사이즈보정난수, 5})
+		PRINTL 
+	ELSEIF INPUT_MODE >= 1100 && INPUT_MODE < 2000 && (INPUT_MODE % 100 == 0 || INPUT_MODE % 100 == 10)
+		RESETCOLOR
+		IF INPUT_MODE == 1100
+			PRINTL 　　신장 성장률 난수치(범위: 1-11)의 값을 입력해 주십시오.
+			PRINTL 　　입력값이 높을수록 외관 나이에 따라 신장이 커지기 쉬워집니다.
+		ELSEIF INPUT_MODE == 1200
+			PRINTL 　　신장 보정 난수치(범위: 1-31)의 값을 입력해 주십시오.
+			PRINTL 　　입력값이 높을수록 신장이 커지기 쉬워집니다.
+		ELSEIF INPUT_MODE == 1300
+			PRINTL 　　체중 수치(범위: 1-59)의 값을 입력해 주십시오.
+			PRINTL 　　입력값이 높을수록 체중이 커지기 쉬워집니다.
+		ELSEIF INPUT_MODE == 1400
+			PRINTL 　　허리 둘레 난수치(범위: 1-15)의 값을 입력해 주십시오.
+			PRINTL 　　입력값이 높을수록 허리 둘레가 넓어지기 쉬워집니다.
+		ELSEIF INPUT_MODE == 1500
+			PRINTL 　　골반 둘레 난수치(범위: 1-16)의 값을 입력해 주십시오.
+			PRINTL 　　입력값이 높을수록 골반 둘레가 넓어지기 쉬워집니다.
+		ELSEIF INPUT_MODE == 1600
+			PRINTL 　　언더 난수치(범위: 1-13)의 값을 입력해 주십시오.
+			PRINTL 　　입력값이 높을수록 밑가슴이 커지게 되며, 탄탄한 체형이 됩니다.
+		ELSEIF INPUT_MODE == 1700
+			PRINTL 　　가슴 탄력 난수치(범위: 1-23)의 값을 입력해 주십시오.
+			PRINTL 　　입력값이 높을수록 윗가슴이 작아지게 되며, 컵 수가 떨어집니다.
+		ELSEIF INPUT_MODE == 1800
+			PRINTL 　　가슴 성장률 난수치(범위: 1-7)의 값을 입력해 주십시오.
+			PRINTL 　　입력값이 높을수록 외관 나이에 따라 가슴이 커지기 쉬워집니다.
+		ELSEIF INPUT_MODE == 1900
+			PRINTL 　　가슴 사이즈 보정 난수치(범위: 1-53)의 값을 입력해 주십시오.
+			PRINTL 　　입력값이 높을수록 가슴의 크기에 대한 소질의 영향이 커지게 됩니다.
+		ENDIF
+		PRINTL
+		PRINTL
+		PRINTL 　　　 [0] 초기화
+		PRINTL
+	ELSE
+		CALL SEIKAKU_CHECK, "STRING", ARG:0
+		SIF RESULTS == "랜덤"
+			RESULTS = 미설정
+		LOCALS = 개성  (성격：%RESULTS%)
+		PRINTPLAINFORM 　%LOCALS, 46, LEFT%
+		SIF LOCK:0 > 0 && LOCK:1 > 0 && LOCK:2 > 0
+			SETCOLOR 96,96,96
+		PRINTFORML 오토 롤러　[69]
+		RESETCOLOR
+		PRINTFORML 
+		IF CSTR:ARG:40 != ""
+			LOCALS = 『%CSTR:ARG:40%』
+		ELSE
+			LOCALS = 『없음』
+		ENDIF
+		PRINTFORM 　　[60] %LOCALS, 46,LEFT%
+		PRINTPLAIN 　
+		SIF LOCK:0 > 0
+			SETCOLOR 0,255,255
+		PRINTFORM 고정　[160]
+		RESETCOLOR
+		PRINTPLAIN 　　
+		PRINTFORM 소거　[260]
+		PRINTL 
+		IF CSTR:ARG:41 != ""
+			LOCALS = 『%CSTR:ARG:41%』
+		ELSE
+			LOCALS = 『없음』
+		ENDIF
+		PRINTFORM 　　[61] %LOCALS, 46,LEFT%
+		PRINTPLAIN 　
+		SIF LOCK:1 > 0
+			SETCOLOR 0,255,255
+		PRINTFORM 고정　[161]
+		RESETCOLOR
+		PRINTPLAIN 　　
+		PRINTFORM 소거　[261]
+		PRINTL 
+		IF CSTR:ARG:42 != ""
+			LOCALS = 『%CSTR:ARG:42%』
+		ELSE
+			LOCALS = 『없음』
+		ENDIF
+		PRINTFORM 　　[62] %LOCALS, 46,LEFT%
+		PRINTPLAIN 　
+		SIF LOCK:2 > 0
+			SETCOLOR 0,255,255
+		PRINTFORM 고정　[162]
+		RESETCOLOR
+		PRINTPLAIN 　　
+		PRINTFORM 소거　[262]
+		PRINTL 
+		PRINTL 
+	ENDIF
+	RESETCOLOR
+
+	DRAWLINE
+	IF INPUT_MODE >= 1100 && INPUT_MODE < 2000
+		LOCALS:1 = [-1] 취소
+	ELSEIF INPUT_MODE == 1
+		LOCALS:1 = [30] 취소
+	ELSEIF INPUT_MODE % 10 == 0
+		LOCALS:1 = [{나이치:(INPUT_MODE != 0), 2}] 취소
+	ELSEIF INPUT_MODE == 2
+		LOCALS:1 = [{실제나이치, 2}] 취소
+	ELSEIF INPUT_MODE < 0
+		LOCALS:1 = [99] 결정하고 돌아간다
+	ELSE
+		LOCALS:1 = [{INPUT_MODE, 2}] 취소
+	ENDIF
+	PRINTFORM %LOCALS:1%
+	STRLENS LOCALS:1
+	LOCALS:1 = (0~99999) 해당 범위 내에서 키보드로 직접 입력할 수 있습니다.
+	SIF (INPUT_MODE % 10 == 0 && INPUT_MODE < 1000) || INPUT_MODE == 2
+		PRINTPLAINFORM %LOCALS:1, 80 - RESULT, RIGHT%
+
+	INPUT
+	DISPLAY_FLAG = -1
+;실제 나이 입력
+	IF INPUT_MODE == 2
+		IF RESULT >= 0 && RESULT <= 99999
+			실제나이치 = RESULT
+			INPUT_MODE = -1
+		ENDIF
+;나이 입력
+	ELSEIF INPUT_MODE % 10 == 0
+		IF INPUT_MODE < 1000
+			IF RESULT >= 0 && RESULT <= 99999
+				나이치:(INPUT_MODE / 10) = RESULT
+				SETBIT DISPLAY_FLAG, INPUT_MODE / 10
+				INPUT_MODE = -1
+			ENDIF
+;오토 롤러 설정
+		ELSEIF RESULT < 0
+			INPUT_MODE = 1
+		ELSEIF INPUT_MODE == 1100 && RESULT >= 0 && RESULT < 12
+			TALENT:ARG:신장성장률난수 = RESULT
+			INPUT_MODE = 1
+		ELSEIF INPUT_MODE == 1200 && RESULT >= 0 && RESULT < 32
+			TALENT:ARG:신장보정난수 = RESULT
+			INPUT_MODE = 1
+		ELSEIF INPUT_MODE == 1300 && RESULT >= 0 && RESULT < 60
+			TALENT:ARG:체중난수 = RESULT
+			INPUT_MODE = 1
+		ELSEIF INPUT_MODE == 1400 && RESULT >= 0 && RESULT < 16
+			TALENT:ARG:허리둘레난수 = RESULT
+			INPUT_MODE = 1
+		ELSEIF INPUT_MODE == 1500 && RESULT >= 0 && RESULT < 17
+			TALENT:ARG:골반둘레난수 = RESULT
+			INPUT_MODE = 1
+		ELSEIF INPUT_MODE == 1600 && RESULT >= 0 && RESULT < 14
+			TALENT:ARG:언더난수 = RESULT
+			INPUT_MODE = 1
+		ELSEIF INPUT_MODE == 1700 && RESULT >= 0 && RESULT < 24
+			TALENT:ARG:가슴탄력난수 = RESULT
+			INPUT_MODE = 1
+		ELSEIF INPUT_MODE == 1800 && RESULT >= 0 && RESULT < 8
+			TALENT:ARG:가슴성장률난수 = RESULT
+			INPUT_MODE = 1
+		ELSEIF INPUT_MODE == 1900 && RESULT >= 0 && RESULT < 54
+			TALENT:ARG:가슴사이즈보정난수 = RESULT
+			INPUT_MODE = 1
+		ENDIF
+;왜소함・장신 전환
+	ELSEIF RESULT % 10 == 1 && RESULT < 20 && NO:ARG == 0
+		IF RESULT / 10 > 0
+			IF CHARATALENT_F(ARG,1,"장신")
+				TALENT:ARG:변신시체격변동 -= 1
+				SIF CHARATALENT_F(ARG,1,"왜소함") == 0
+					TALENT:ARG:변신시체격변동 -= 1
+			ELSEIF CHARATALENT_F(ARG,1,"왜소함")
+				TALENT:ARG:변신시체격변동 += 1
+				SIF CHARATALENT_F(ARG,1,"왜소함") > 0
+					TALENT:ARG:변신시체격변동 += 1
+			ELSE
+				TALENT:ARG:변신시체격변동 += 1
+				SIF CHARATALENT_F(ARG,1,"장신") == 0
+					TALENT:ARG:변신시체격변동 += 1
+			ENDIF
+		ELSE
+			IF CHARATALENT_F(ARG,0,"장신")
+				TALENT:ARG:장신 = 0
+				TALENT:ARG:왜소함 = 1
+			ELSEIF CHARATALENT_F(ARG,0,"왜소함")
+				TALENT:ARG:왜소함 = 0
+			ELSE
+				TALENT:ARG:장신 = 1
+			ENDIF
+		ENDIF
+		SETBIT DISPLAY_FLAG, RESULT / 10
+;성별 전환
+	ELSEIF RESULT % 10 == 2 && RESULT < 20 && NO:ARG == 0
+		;결계를 초기화
+		FOR LOCAL,190,194
+			IF TALENT:ARG:LOCAL
+				TALENT:ARG:LOCAL = 0
+				JUEL:ARG:수련P += 50
+			ENDIF
+		NEXT
+		IF TALENT:ARG:피임결계
+			TALENT:ARG:피임결계 = 0
+			JUEL:ARG:수련P += 50
+		ENDIF
+		IF RESULT / 10 > 0
+			SIF CHARATALENT_F(ARG,1,"남자")
+				TALENT:ARG:변신시외관 = TALENT:ARG:외관
+			IF TALENT:ARG:변신시TS > 0
+				TALENT:ARG:변신시TS = 0
+			ELSE
+				TALENT:ARG:변신시TS = 1
+			ENDIF
+		ELSE
+			IF TALENT:ARG:남자 > 0
+				SIF CHARATALENT_F(ARG,1,"절벽")
+					TALENT:ARG:빈유 = 2
+				SIF CHARATALENT_F(ARG,1,"빈유")
+					TALENT:ARG:빈유 = 1
+				SIF CHARATALENT_F(ARG,1,"기유")
+					TALENT:ARG:거유 = 5
+				SIF CHARATALENT_F(ARG,1,"마유")
+					TALENT:ARG:거유 = 4
+				SIF CHARATALENT_F(ARG,1,"초유")
+					TALENT:ARG:거유 = 3
+				SIF CHARATALENT_F(ARG,1,"폭유")
+					TALENT:ARG:거유 = 2
+				SIF CHARATALENT_F(ARG,1,"거유")
+					TALENT:ARG:거유 = 1
+				SIF CHARATALENT_F(ARG,1,"남자") == 0
+					TALENT:ARG:외관 = TALENT:ARG:변신시외관
+				TALENT:ARG:남자 = 0
+			ELSE
+				TALENT:ARG:남자 = 1
+				IF CHARATALENT_F(ARG,1,"남자") == 0
+					TALENT:ARG:변신시가슴사이즈변동 = TALENT:ARG:거유 - TALENT:ARG:빈유
+					TALENT:ARG:변신시외관 = TALENT:ARG:외관
+				ENDIF
+				TALENT:ARG:빈유 = 0
+				TALENT:ARG:거유 = 0
+				TALENT:ARG:외관 = 0
+				TALENT:ARG:후타나리 = 0
+			ENDIF
+		ENDIF
+		IF CHARATALENT_F(ARG,1,"남자")
+			TALENT:ARG:변신시가슴사이즈변동 = 0
+			TALENT:ARG:변신시외관 = 0
+			TALENT:ARG:변신시후타나리 = 0
+		ENDIF
+		SETBIT DISPLAY_FLAG, 0
+		SETBIT DISPLAY_FLAG, 1
+;빈유・거유 전환
+	ELSEIF RESULT % 10 == 3 && RESULT < 20 && CHARATALENT_F(ARG,(RESULT/10),"남자") == 0 && NO:ARG == 0
+		IF RESULT / 10 > 0
+			IF CHARATALENT_F(ARG,1,"거유")
+				TALENT:ARG:변신시가슴사이즈변동 += 1
+			ELSEIF CHARATALENT_F(ARG,1,"폭유")
+				TALENT:ARG:변신시가슴사이즈변동 += 1
+			ELSEIF CHARATALENT_F(ARG,1,"초유")
+				TALENT:ARG:변신시가슴사이즈변동 += 1
+			ELSEIF CHARATALENT_F(ARG,1,"마유")
+				TALENT:ARG:변신시가슴사이즈변동 += 1
+			ELSEIF CHARATALENT_F(ARG,1,"기유")
+				TALENT:ARG:변신시가슴사이즈변동 = -2
+			ELSEIF CHARATALENT_F(ARG,1,"절벽")
+				TALENT:ARG:변신시가슴사이즈변동 += 1
+			ELSEIF CHARATALENT_F(ARG,1,"빈유")
+				TALENT:ARG:변신시가슴사이즈변동 += 1
+			ELSE
+				TALENT:ARG:변신시가슴사이즈변동 += 1
+				SIF CHARATALENT_F(ARG,1,"거유") == 0
+					TALENT:ARG:변신시가슴사이즈변동 += 1
+				SIF CHARATALENT_F(ARG,1,"거유") == 0
+					TALENT:ARG:변신시가슴사이즈변동 += 1
+			ENDIF
+		ELSE
+			IF CHARATALENT_F(ARG,0,"거유")
+				TALENT:ARG:거유 = 2
+			ELSEIF CHARATALENT_F(ARG,0,"폭유")
+				TALENT:ARG:거유 = 3
+			ELSEIF CHARATALENT_F(ARG,0,"초유")
+				TALENT:ARG:거유 = 4
+			ELSEIF CHARATALENT_F(ARG,0,"마유")
+				TALENT:ARG:거유 = 5
+			ELSEIF CHARATALENT_F(ARG,0,"기유")
+				TALENT:ARG:거유 = 0
+				TALENT:ARG:빈유 = 2
+			ELSEIF CHARATALENT_F(ARG,0,"절벽")
+				TALENT:ARG:빈유 = 1
+			ELSEIF CHARATALENT_F(ARG,0,"빈유")
+				TALENT:ARG:빈유 = 0
+			ELSE
+				TALENT:ARG:거유 = 1
+			ENDIF
+		ENDIF
+		SETBIT DISPLAY_FLAG, RESULT / 10
+;외관 소질 변경
+	ELSEIF RESULT == 4 && CHARATALENT_F(ARG,(RESULT/10),"남자") == 0 && NO:ARG == 0
+		IF TALENT:ARG:외관 == 1
+			TALENT:ARG:외관 = 2
+		ELSEIF TALENT:ARG:외관 == 2
+			TALENT:ARG:외관 = 3
+		ELSEIF TALENT:ARG:외관 == 3
+			TALENT:ARG:외관 = 4
+		ELSEIF TALENT:ARG:외관 == 4
+			TALENT:ARG:외관 = 0
+		ELSE
+			TALENT:ARG:외관 = 1
+		ENDIF
+		SIF CHARATALENT_F(ARG,1,"남자") == 0
+			TALENT:ARG:변신시외관 = TALENT:ARG:외관
+		SETBIT DISPLAY_FLAG, 0
+	ELSEIF RESULT == 14 && CHARATALENT_F(ARG,(RESULT/10),"남자") == 0 && NO:ARG == 0
+		IF TALENT:ARG:변신시외관 == 1
+			TALENT:ARG:변신시외관 = 2
+		ELSEIF TALENT:ARG:변신시외관 == 2
+			TALENT:ARG:변신시외관 = 3
+		ELSEIF TALENT:ARG:변신시외관 == 3
+			TALENT:ARG:변신시외관 = 4
+		ELSEIF TALENT:ARG:변신시외관 == 4
+			TALENT:ARG:변신시외관 = 0
+		ELSE
+			TALENT:ARG:변신시외관 = 1
+		ENDIF
+		SETBIT DISPLAY_FLAG, 1
+;변화의 유무 전환
+	ELSEIF RESULT == 20 && TALENT:ARG:변신능력 == 1
+		TALENT:ARG:변신시TS = 0
+		TALENT:ARG:변신시외관 = TALENT:ARG:외관
+		TALENT:ARG:변신시체격변동 = 0
+		TALENT:ARG:변신시가슴사이즈변동 = 0
+		신장치:1 = 신장치:0
+		체중치:1 = 체중치:0
+		가슴둘레치:1 = 가슴둘레치:0
+		허리둘레치:1 = 허리둘레치:0
+		골반둘레치:1 = 골반둘레치:0
+		CSTR:ARG:14 = %CSTR:ARG:13%
+		CSTR:ARG:31 = %CSTR:ARG:30%
+		CSTR:ARG:34 = %CSTR:ARG:32%
+		CSTR:ARG:35 = %CSTR:ARG:33%
+		CSTR:ARG:37 = %CSTR:ARG:36%
+		IF 나이치:1 < 0
+			나이치:1 = 나이치:0
+		ELSE
+			나이치:1 = -1
+		ENDIF
+		INPUT_MODE = -2
+;입력 모드를 되돌린다
+	ELSEIF RESULT == 30 && INPUT_MODE == 1
+		INPUT_MODE = -1
+	ELSEIF RESULT == INPUT_MODE && INPUT_MODE != -1
+		INPUT_MODE = -1
+;입력 모드 지정
+	ELSEIF (RESULT < 10 || RESULT == 15 || (RESULT <= 25 && 나이치:1 >= 0) || RESULT == 45) && RESULT % 10 != 3 && RESULT % 10 != 4
+		INPUT_MODE = RESULT
+;재생성
+	ELSEIF RESULT == 40
+		CALL GENERATE_BODYLINE, ARG
+		DISPLAY_FLAG = 3
+;헤어스타일 랜덤 설정
+	ELSEIF RESULT == 35
+		CSTR:ARG:12 = %STR:(30000 + RAND:9)%
+		CSTR:ARG:13 = %STR:(30100 + RAND:15)%
+		CSTR:ARG:14 = %STR:(30100 + RAND:15)%
+		SIF INPUT_MODE == 5 || INPUT_MODE == 15 || INPUT_MODE == 25
+			INPUT_MODE = -1
+;설정 종료
+	ELSEIF RESULT == 99 && INPUT_MODE < 0
+		$LOOP_99
+		;개성을 앞에 채워 둔다
+		IF CSTR:ARG:40 == "" && (CSTR:ARG:41 != "" || CSTR:ARG:42 != "")
+			CSTR:ARG:40 = %CSTR:ARG:41%
+			CSTR:ARG:41 = %CSTR:ARG:42%
+			CSTR:ARG:42 =
+			GOTO LOOP_99
+		ENDIF
+		IF CSTR:ARG:41 == "" && CSTR:ARG:42 != ""
+			CSTR:ARG:41 = %CSTR:ARG:42%
+			CSTR:ARG:42 =
+			GOTO LOOP_99
+		ENDIF
+		;변신 시 여체화하지 않을 경우
+		IF TALENT:ARG:남자 == 0 || TALENT:ARG:변신시TS == 0
+			TALENT:ARG:변신시젖기쉬움변동 = 0
+			TALENT:ARG:변신시V감각변동 = 0
+		ENDIF
+		BREAK
+;앞머리 설정
+	ELSEIF RESULT >= 100 && RESULT < 109 && INPUT_MODE == 5
+		CSTR:ARG:12 = %STR:(29900 + RESULT)%
+;뒷머리 설정
+	ELSEIF ((RESULT >= 200 && RESULT < 215) || (RESULT >= 250 && RESULT < 265)) && (INPUT_MODE == 15 || INPUT_MODE == 25)
+		CSTR:ARG:(13 + (RESULT - 200) / 50) = %STR:(30100 + RESULT % 50)%
+;눈매 설정
+	ELSEIF RESULT >= 300 && RESULT < 314 && INPUT_MODE == 45
+		CSTR:ARG:18 = %STR:(29900 + RESULT)%
+;머리・눈동자 팔레트
+	ELSEIF RESULT >= 600 && RESULT < 900 && RESULT % 50 == 0
+		LOCAL = (RESULT - 600) / 50
+		CALL COLOR_TABLE
+		IF RESULT > 0
+			CSTR:ARG:(30 + LOCAL) = 
+			CSTR:ARG:(30 + LOCAL) += @"{RESULT:1}//{RESULT:2}//{RESULT:3}"
+		ENDIF
+		SETBIT DISPLAY_FLAG, 2
+;머리・눈동자 프리셋
+	ELSEIF RESULT >= 600 && RESULT < 900 && RESULT % 50 < 11
+		IF RESULT % 50 == 1
+			CSTR:ARG:(RESULT / 50 + 18) = 255//8//8
+		ELSEIF RESULT % 50 == 2
+			CSTR:ARG:(RESULT / 50 + 18) = 8//255//125
+		ELSEIF RESULT % 50 == 3
+			CSTR:ARG:(RESULT / 50 + 18) = 8//125//255
+		ELSEIF RESULT % 50 == 4
+			CSTR:ARG:(RESULT / 50 + 18) = 255//255//8
+		ELSEIF RESULT % 50 == 5
+			CSTR:ARG:(RESULT / 50 + 18) = 255//8//255
+		ELSEIF RESULT % 50 == 6
+			CSTR:ARG:(RESULT / 50 + 18) = 255//125//8
+		ELSEIF RESULT % 50 == 7
+			CSTR:ARG:(RESULT / 50 + 18) = 255//8//125
+		ELSEIF RESULT % 50 == 8
+			CSTR:ARG:(RESULT / 50 + 18) = 205//205//205
+		ELSEIF RESULT % 50 == 9
+			CSTR:ARG:(RESULT / 50 + 18) = 88//8//8
+		ELSEIF RESULT % 50 == 10
+			CSTR:ARG:(RESULT / 50 + 18) = 40//24//24
+		ENDIF
+;머리・눈동자　다른 색에 맞춘다
+	ELSEIF RESULT == 649
+		CSTR:ARG:30 = %CSTR:ARG:31%
+	ELSEIF RESULT == 699
+		CSTR:ARG:31 = %CSTR:ARG:30%
+	ELSEIF RESULT == 748
+		CSTR:ARG:32 = %CSTR:ARG:33%
+	ELSEIF RESULT == 749
+		CSTR:ARG:32 = %CSTR:ARG:34%
+	ELSEIF RESULT == 798
+		CSTR:ARG:33 = %CSTR:ARG:32%
+	ELSEIF RESULT == 799
+		CSTR:ARG:33 = %CSTR:ARG:35%
+	ELSEIF RESULT == 848
+		CSTR:ARG:34 = %CSTR:ARG:35%
+	ELSEIF RESULT == 849
+		CSTR:ARG:34 = %CSTR:ARG:32%
+	ELSEIF RESULT == 898
+		CSTR:ARG:35 = %CSTR:ARG:34%
+	ELSEIF RESULT == 899
+		CSTR:ARG:35 = %CSTR:ARG:33%
+;피부 프리셋
+	ELSEIF RESULT >= 900 && RESULT < 1000
+		IF RESULT % 10 == 0
+			CSTR:ARG:(RESULT / 50 + 18) = 255//236//220
+		ELSEIF RESULT % 10 == 1
+			CSTR:ARG:(RESULT / 50 + 18) = 255//200//180
+		ELSEIF RESULT % 10 == 2
+			CSTR:ARG:(RESULT / 50 + 18) = 183//86//17
+		ELSEIF RESULT % 10 == 3
+			CSTR:ARG:(RESULT / 50 + 18) = 40//24//24
+		ENDIF
+;오토 롤러 설정
+	ELSEIF RESULT == 1000 && (RESULT % 100 == 0 || RESULT % 100 == 10)
+		TALENT:ARG:신장성장률난수 = 0
+		TALENT:ARG:신장보정난수 = 0
+		TALENT:ARG:체중난수 = 0
+		TALENT:ARG:허리둘레난수 = 0
+		TALENT:ARG:골반둘레난수 = 0
+		TALENT:ARG:언더난수 = 0
+		TALENT:ARG:가슴탄력난수 = 0
+		TALENT:ARG:가슴성장률난수 = 0
+		TALENT:ARG:가슴사이즈보정난수 = 0
+	ELSEIF RESULT >= 1100 && RESULT < 2000 && (RESULT % 100 == 0 || RESULT % 100 == 10)
+		INPUT_MODE = RESULT
+	ELSEIF RESULT == 1020
+		CAL_VAR:0 = 0
+		CAL_VAR:1 = 0
+	ELSEIF RESULT == 1120
+		CAL_VAR:3 = 0
+		CAL_VAR:4 = 0
+	ELSEIF RESULT == 1220
+		CAL_VAR:6 = 0
+		CAL_VAR:7 = 0
+	ELSEIF RESULT == 1320
+		CAL_VAR:9 = 0
+		CAL_VAR:10 = 0
+	ELSEIF RESULT == 1420
+		CAL_VAR:12 = 0
+		CAL_VAR:13 = 0
+	ELSEIF RESULT == 1500
+		SETBIT DISPLAY_FLAG, 3
+	ELSEIF RESULT == 30
+		INPUT_MODE = 1
+	ELSEIF RESULT == 50
+		INPUT_MODE = 2
+	ELSEIF RESULT >= 60 && RESULT <= 62 && INPUT_MODE < 0
+		CALL SET_PERSONALITY, ARG, (RESULT - 20)
+	ELSEIF RESULT >= 160 && RESULT <= 162 && INPUT_MODE < 0
+		IF LOCK:(RESULT - 160) > 0
+			LOCK:(RESULT - 160) = 0
+		ELSE
+			LOCK:(RESULT - 160) = 1
+		ENDIF
+	ELSEIF RESULT >= 260 && RESULT <= 262 && INPUT_MODE < 0
+		CSTR:ARG:(RESULT - 220) = 
+	ELSEIF RESULT == 69 && INPUT_MODE < 0 && (LOCK:0 == 0 || LOCK:1 == 0 || LOCK:2 == 0)
+		$LOOP_69_0
+		IF LOCK:0 == 0
+			CSTR:ARG:40 = %STR:(30500 + RAND:500)%
+			SIF CSTR:ARG:40 == "" || CSTR:ARG:40 == "CSTR:ARG:41" || CSTR:ARG:40 == "CSTR:ARG:42"
+				GOTO LOOP_69_0
+		ENDIF
+		$LOOP_69_1
+		IF LOCK:1 == 0
+			CSTR:ARG:41 = %STR:(30500 + RAND:500)%
+			SIF CSTR:ARG:41 == "" || CSTR:ARG:41 == "CSTR:ARG:40" || CSTR:ARG:40 == "CSTR:ARG:42"
+				GOTO LOOP_69_1
+		ENDIF
+		$LOOP_69_2
+		IF LOCK:2 == 0
+			CSTR:ARG:42 = %STR:(30500 + RAND:500)%
+			SIF CSTR:ARG:42 == "" || CSTR:ARG:42 == "CSTR:ARG:40" || CSTR:ARG:42 == "CSTR:ARG:41"
+				GOTO LOOP_69_2
+		ENDIF
+	ENDIF
+	SIF GETBIT(DISPLAY_FLAG, 2) == 0
+		CLEARLINE LINECOUNT - LINE
+LOOP 1
+
+IF 나이치:1 == 나이치:0 && TALENT_CHANGE_F(ARG) == 0 && 신장치:1 == 신장치:0 && 가슴둘레치:1 == 가슴둘레치:0
+	SIF CSTR:ARG:30 == CSTR:ARG:31 && CSTR:ARG:32 == CSTR:ARG:34 && CSTR:ARG:33 == CSTR:ARG:35 && CSTR:ARG:36 == CSTR:ARG:37
+		나이치:1 = -1
+ENDIF
+
+BASE:ARG:나이 = 나이치:0
+BASE:ARG:실제나이 = 실제나이치
+BASE:ARG:신장 = 신장치:0
+BASE:ARG:체중 = 체중치:0
+BASE:ARG:가슴둘레 = 가슴둘레치:0
+BASE:ARG:허리둘레 = 허리둘레치:0
+BASE:ARG:골반둘레 = 골반둘레치:0
+
+IF 나이치:1 >= 0
+	MAXBASE:ARG:나이 = 나이치:1
+	MAXBASE:ARG:신장 = 신장치:1
+	MAXBASE:ARG:체중 = 체중치:1
+	MAXBASE:ARG:가슴둘레 = 가슴둘레치:1
+	MAXBASE:ARG:허리둘레 = 허리둘레치:1
+	MAXBASE:ARG:골반둘레 = 골반둘레치:1
+ELSEIF TALENT:ARG:변신능력 == 1
+	MAXBASE:ARG:나이 = 나이치:0
+	MAXBASE:ARG:신장 = 신장치:0
+	MAXBASE:ARG:체중 = 체중치:0
+	MAXBASE:ARG:가슴둘레 = 가슴둘레치:0
+	MAXBASE:ARG:허리둘레 = 허리둘레치:0
+	MAXBASE:ARG:골반둘레 = 골반둘레치:0
+ENDIF
+
+TARGET = KEEP_TARGET
+;처리 종료
+
+
+;먼저 BASE:40(나이)을 설정한 후에 캐릭터 ID를 지정하여 호출한다
+@CHARA_SIZE_DEFAULT, C_ID
+#DIM C_ID
+
+;쓰리 사이즈 등 설정
+SIF TALENT:C_ID:변신능력 < 1
+	MAXBASE:C_ID:나이 = -1
+
+CALL GENERATE_CHAR_SIZE, C_ID, 0
+CFLAG:C_ID:33 = RESULT:0
+CFLAG:C_ID:34 = RESULT:1
+BASE:C_ID:신장 = RESULT:2
+BASE:C_ID:체중 = RESULT:3
+BASE:C_ID:가슴둘레 = RESULT:4
+BASE:C_ID:허리둘레 = RESULT:5
+BASE:C_ID:골반둘레 = RESULT:6
+
+;변신 시 설정
+IF TALENT:C_ID:변신능력 > 0
+	CALL GENERATE_CHAR_SIZE, C_ID, 1
+	MAXBASE:C_ID:신장 = RESULT:2
+	MAXBASE:C_ID:체중 = RESULT:3
+	MAXBASE:C_ID:가슴둘레 = RESULT:4
+	MAXBASE:C_ID:허리둘레 = RESULT:5
+	MAXBASE:C_ID:골반둘레 = RESULT:6
+ENDIF
+
+
+;변신 시의 색 추가
+@CONVERT_COLORCSTR, ARG
+;CSTR:30과 CSTR:36 둘 다 공백이 아니라면 컨버트 완료이므로 종료
+SIF CSTR:ARG:30 != "" && CSTR:ARG:36 != "" 
+	RETURN 0
+;30:머리색
+;31:변신 중의 머리색
+;32:오른쪽 눈의 색
+;33:왼쪽 눈의 색
+;34:피부색
+;↓
+;30:머리색
+;31:변신 중의 머리색
+;32:오른쪽 눈의 색
+;33:왼쪽 눈의 색
+;34:변신 중의 오른쪽 눈의 색
+;35:변신 중의 왼쪽 눈의 색
+;36:피부색
+;37:변신 중의 피부색
+
+;피부색을 이행
+CSTR:ARG:36 = %CSTR:ARG:34%
+
+;변신 중의 눈동자 색을 카피
+CSTR:ARG:34 = %CSTR:ARG:32%
+CSTR:ARG:35 = %CSTR:ARG:33%
+
+;변신 중의 피부색을 카피
+CSTR:ARG:37 = %CSTR:ARG:36%
+
+
+;------------------------------------------------------------------------------
+;실제 나이 추가
+;ARG = 캐릭터 번호
+@CONVERT_AGE, ARG
+SIF CFLAG:ARG:34 == 0 || BASE:ARG:골반둘레
+	RETURN 0
+FOR LOCAL, 0, 7
+	BASE:ARG:(47 - LOCAL) = BASE:ARG:(46 - LOCAL)
+NEXT
+SIF MAXBASE:ARG:나이 < 0
+	RETURN 0
+FOR LOCAL, 0, 7
+	MAXBASE:ARG:(47 - LOCAL) = MAXBASE:ARG:(46 - LOCAL)
+NEXT
+
+
+;------------------------------------------------------------------------------
+;개성 설정
+;ARG   = 캐릭터 번호
+;ARG:1 = 설정할 CSTR의 번호 40, 41, 42 중 어느 것인가
+@SET_PERSONALITY, ARG, ARG:1
+#DIM LCOUNT
+#DIMS SELECTS
+SIF ARG:1 != 40 && ARG:1 != 41 && ARG:1 != 42
+	RETURN
+CALL LB
+LCOUNT = LINECOUNT
+$MASTER_LOOP
+FOR LOCAL, 0, 20
+	$REROLL
+	SELECTS = %STR:(30500 + RAND:500)%
+	SIF SELECTS == "" || (SELECTS == "%CSTR:ARG:40%") || (SELECTS == "%CSTR:ARG:41%") || (SELECTS == "%CSTR:ARG:42%")
+		GOTO REROLL
+	FOR LOCAL:1, 0, 20
+		SIF (SELECTS == "%LOCALS:(LOCAL:1)%")
+			GOTO REROLL
+	NEXT
+	LOCALS:LOCAL = %SELECTS%
+NEXT
+
+$INPUT_LOOP
+PRINTFORML  {ARG}번째 캐릭터『%NAME:ARG%』에게 설정할 개성을 선택해 주십시오.
+DRAWLINE
+PRINTL 
+FOR LOCAL, 0, 20
+	PRINTFORML 　[{LOCAL, 2}] %LOCALS:LOCAL%
+NEXT
+PRINTL 
+PRINTL [20] 직접 입력한다
+PRINTL
+PRINTL [200] 재생성
+PRINTL [999] 변경하지 않고 돌아간다
+INPUT
+IF RESULT == 200
+	CLEARLINE LINECOUNT - LCOUNT
+	GOTO MASTER_LOOP
+ELSEIF RESULT == 999
+	RETURN 
+ELSEIF RESULT >= 0 && RESULT <= 19
+	CSTR:ARG:(ARG:1) = %LOCALS:RESULT%
+	RETURN
+ELSEIF RESULT == 20
+	INPUTS
+	IF RESULTS == ""
+		CLEARLINE LINECOUNT - LCOUNT
+		GOTO INPUT_LOOP
+	ENDIF
+	CSTR:ARG:(ARG:1) = %RESULTS%
+	RETURN
+ELSE
+	CLEARLINE LINECOUNT - LCOUNT
+	GOTO INPUT_LOOP
+ENDIF

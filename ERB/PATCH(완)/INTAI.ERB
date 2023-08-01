@@ -1,0 +1,156 @@
+﻿;은퇴 기능은 아직 제대로 구현된 건 아닌 것 같다... 로다가서 찾아와야 하나
+
+@CHARA_INTAI
+	PRINTL 한번 은퇴한 캐릭터 다시는 현장에 복귀할 수 없습니다. 정말로 괜찮겠습니까?
+	PRINTL [0] 네
+	PRINTL [1] 아니오
+	CALL INPUT_ROOP,2
+	IF RESULT == 0
+		PRINTL 진짜 진짜로 은퇴해도 괜찮겠습니까?
+		PRINTL [0] 아니오
+		PRINTL [1] 네
+		CALL INPUT_ROOP,2
+		IF RESULT == 1
+			CALL OLD_GIRL
+		ENDIF
+	ENDIF
+
+
+@OLD_GIRL
+
+;가치 기준
+LOCAL:0=((BASE:기초체력+BASE:기초기력)/10+(+BASE:기초성내성+BASE:공격+BASE:방어+BASE:민첩))*ABL:레벨
+;방위력에 추가
+CFLAG:852 += LOCAL:0
+;현재 방위력의 존재 가치가 낮기 때문에 보너스
+MONEY += LOCAL:0 *15
+ CALL MASSAGE_INTAI
+DELCHARA TARGET
+PRINTFORML 방위력이 {LOCAL:0} 올라갔다!!
+PRINTFORML 자금을{LOCAL:0*15}$ 얻었다!!
+
+@INPUT_ROOP,ARG
+$INPUT_LOOP_FUNC
+INPUT
+IF RESULT < 0 || RESULT > ARG
+	GOTO INPUT_LOOP_FUNC
+ELSE
+	RETURN RESULT
+ENDIF
+
+
+@MASSAGE_INTAI
+
+;플래그용
+LOCAL:0 = 1
+PRINTFORM %CALLNAME%은(는) 
+;공격 > 나머지 두 개
+IF BASE:공격 > MAX(BASE:방어,BASE:민첩)
+	PRINTFORM 공격력이 뛰어나고 
+;방어 > 나머지 두 개
+ELSEIF BASE:방어 > MAX(BASE:공격,BASE:민첩)
+	PRINTFORM 방어력이 뛰어나고 
+;민첩 > 나머지 두 개
+ELSEIF BASE:민첩 > MAX(BASE:공격,BASE:방어)
+	PRINTFORM 민첩성이 뛰어나고 
+ENDIF
+IF TALENT:근거리특기
+	PRINT 근접 전투를 특기로 하여 
+ELSEIF TALENT:중거리특기
+	PRINT 적과의 거리로 밀당을 하는 전투를 특기로 했던
+ELSEIF TALENT:원거리특기
+	PRINT 일방적인 저격을 특기로 했던
+ENDIF
+PRINTL  훌륭한 전사였지만
+;성(性)성장
+;완전 개발 완료
+IF MIN(ABL:C감각,ABL:V감각,ABL:A감각,ABL:B감각) == 5
+	PRINTFORML 이 세상의 쾌락 전부를 %STR:2500%에 의해 새겨진
+;전신 개발 완료
+ELSEIF ABL:C감각 + ABL:V감각 + ABL:A감각 + ABL:B감각 > 14
+	PRINTFORML %STR:2500%에게 집요하게 능욕당하여, 전신이 민감하기 짝이 없는 성감대로 변해 버린
+;한 부위 MAX
+ELSEIF MAX(ABL:C감각,ABL:V감각,ABL:A감각,ABL:B감각) == 5
+	PRINTFORM %STR:2500%에 의해 거듭된 능욕으로, 
+	IF ABL:A감각 == 5
+		PRINTFORML %CALLNAME%의 국문은 성기보다도 민감한 구멍으로 새로이 만들어졌다.
+	ELSEIF ABL:V감각 == 5
+		PRINTFORML %CALLNAME%은(는) 암구멍에 삽입될 때마다 미칠 듯이 가버리게 돼 버렸다.
+	ELSEIF ABL:B감각 == 5
+		PRINTL %CALLNAME%의 젖꼭지는 항상 발기하여 가라앉지 않고 계속 우뚝 서 있었다.
+	ELSEIF ABL:C감각 == 5
+		PRINTL %CALLNAME%의 음핵은 한 번 누르면 즉각 가버리는 절정 스위치로 개조되었다.
+	ENDIF
+ELSEIF MAX(ABL:C감각,ABL:V감각,ABL:A감각,ABL:B감각) > 2
+	PRINTFORM %STR:2500%의 완구가 되어 희롱당한 결과, 
+	IF ABL:A감각 > 2
+		PRINTL 애널 절정의 짜릿함을 느끼게 되었다.
+	ELSEIF ABL:V감각 > 2
+		PRINTL 암구멍을 유린당한 나머지 촉수단지라 불러도 무방할 정도가 되었다.
+	ELSEIF ABL:B감각 > 2
+		PRINTFORML 늘 %CALLNAME%의 유방은 쾌락을 탐하게 되었다.
+	ELSEIF ABL:C감각 > 2
+		PRINTL %CALLNAME%의 음핵은 입김만 불어도 켜지는 발정 스위치로 개조되었다.
+	ENDIF
+ELSE
+	LOCAL:0 += 1
+ENDIF
+
+IF LOCAL:0 == 0
+	PRINT 그리하여 이제는 
+ELSEIF MAX(ABL:순종,ABL:욕망,ABL:봉사정신,ABL:마조끼) > 3
+	PRINTFORM %STR:2500%와 상대하는 동안, 이윽고 
+ENDIF
+;각종 속성
+IF ABL:순종 > 3
+	PRINTFORM %STR:2500%에게 거역할 수 없게 되
+ELSEIF ABL:욕망 > 3
+	PRINTFORM %STR:2500%를 보기만 해도 발정하기 시작하게 되
+;ELSEIF ABL:기교 > 3
+ELSEIF ABL:봉사정신 > 3
+	PRINTFORM %STR:2500%에게 기쁜 마음으로 봉사하게 되
+;ELSEIF ABL:노출벽 > 3
+	
+ELSEIF ABL:마조끼 > 3
+	PRINTFORM %STR:2500%의 온갖 성고문에 기쁨을 느끼게 되
+ELSE
+	LOCAL:0 += 2
+ENDIF
+
+;감각이나 그 외에도 3 이하로 중독자가 있을까?
+IF LOCAL:0 == 3 && (ABL:촉수중독 || ABL:자위중독 || ABL:정액중독)
+	PRINTFORM 어 버린 %CALLNAME%은(는) 원래 소질이 음란했던 건지, 
+ELSEIF LOCAL:0 == 2 && (ABL:촉수중독 || ABL:자위중독 || ABL:정액중독)
+	PRINTFORM 어 버린 결과, 
+ELSEIF LOCAL:0 == 1 && (ABL:촉수중독 || ABL:자위중독 || ABL:정액중독)
+	PRINTFORM 어 버림과 동시에, 
+ELSEIF (ABL:촉수중독 || ABL:자위중독 || ABL:정액중독)
+	PRINTFORML 어 버리고 만 것이다.
+	PRINTFORM 아주 심하게 개발된 %CALLNAME%은(는), 
+ELSE
+
+ENDIF
+;각종 중독
+IF ABL:촉수중독
+	PRINTFORML 촉수 생각밖에 할 수 없게 되어 
+ELSEIF ABL:자위중독
+	PRINTFORML 자위 생각밖에 할 수 없게 되어 
+ELSEIF ABL:정액중독
+	PRINTFORML 정액 생각밖에 할 수 없게 되어 
+ELSEIF ABL:모유중독
+	PRINTFORML 자신의 모유 생각밖에 할 수 없게 되어 
+ELSEIF ABL:사정중독
+	PRINTFORML 사정 행위 밖에 생각할 수 없게 되어 
+ELSE
+	LOCAL:0 += 4
+ENDIF
+
+
+IF LOCAL:0 > 6
+	PRINTFORM 자신이 전투에 제대로 임하지 않는 것은 아닐까, 라는 생각이 들어 은퇴를 결심했다.
+ELSEIF LOCAL:0 > 3
+	PRINTFORM 후방으로 물러나 치료를 받기로 했다.
+ELSE
+	PRINTFORM %STR:2500%와늬 전투는 곤란하다고 판단되어 후방 지원으로 돌아갔다.
+ENDIF
+PRINTFORMW  
