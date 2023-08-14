@@ -79,7 +79,7 @@ TALENT:임신 = 0
 
 IF CFLAG:0 == 10 && MONEY >= 5000 && CHARANUM < (등록최대인원 + 1)
 	DRAWLINE
-	PRINTFORML %PRINT_CALLNAME(TARGET)의 아이가 태어났습니다.
+	PRINTFORML %PRINT_CALLNAME(TARGET)%의 아이가 태어났습니다.
 	PRINTFORML 아이를 키우려면 양육비로 $5000이 듭니다.
 	PRINTFORML %PRINT_CALLNAME(TARGET)%이(가) 아이를 직접 키우도록 하시겠습니까?
 	PRINTL
