@@ -397,6 +397,81 @@ ELSEIF RAND:100 < 35
 ENDIF
 
 ;----------------------------------------------------------------------------------------------------------------------------
+;촉수의 공격을 막았을 때의 처리
+@PERFORM_CHEERS_TENTACLE_GUARD_HANTEI
+VARSET LOCAL
+;관전 인원이 ０명이라면 중단
+SIF FLAG:70 + FLAG:71 == 0
+	RETURN
+;적의 행동 결과를 읽게 하기 위한 WAIT
+PRINTW 
+IF FLAG:72
+	IF TALENT:남자 > 0
+		PRINTFORML 어떻게든 공격을 받아낸 %PRINT_TRANSCALLNAME(TARGET)%에게는,
+		PRINTFORML 도리어 관전자들로부터 야유가 날아왔다・・・
+	ELSEIF CLOTH_OUTER_PER > 50
+		PRINTFORML 격렬한 싸움에 의상이 찢어진 %PRINT_TRANSCALLNAME(TARGET)%을(를) 걱정하기는 커녕,
+		PRINTFORML 관중은 자기 편할 대로 야유를 보내고 있었다.
+		IF TALENT:음란 || ABL:노출벽 >= 3
+			PRINTFORML 겨우겨우 버티는 장면을 카메라 꼬마에게 포착당하여 고간이 살짝 쑤시고 말았다・・・
+		ELSE
+			PRINTFORML 적의 공격에 대처하는 데에 한창이던 %PRINT_TRANSCALLNAME(TARGET)%은(는) 뭐라 불평할 수도 없었다・・・
+		ENDIF
+	ELSEIF CLOTH_INNER_PER > 50
+		SIF STAIN:0 & 4 || STAIN:1 & 4 || STAIN:2 & 4
+			PRINT 정액으로 더럽혀지고, 
+		IF CLOTH_OUTER_PER
+			PRINT 옷매무새가 흐트러진 
+		ELSE
+			PRINT 속옷 차림으로 싸우던 
+		ENDIF
+		PRINTFORML %PRINT_TRANSCALLNAME(TARGET)%을(를) 촬영하고자
+		PRINTL 구경꾼들의 카메라 셔터음이 연속으로 울렸다.
+		IF TALENT:음란 || ABL:노출벽 >= 3
+			PRINTL 벌써 고간에 옷이 파고드는 모습까지 확실하게 찍혀 버리고 있었다・・・
+		ELSE
+			PRINTL 사진을 찍지 말라고 호소했지만, 카메라 꼬마가 물러날 기색은 없었다・・・
+		ENDIF
+	ELSE
+		SIF CLOTH_INNER_PER
+			PRINT 거의 
+		PRINTFORML 알몸으로 싸우는 %PRINT_TRANSCALLNAME(TARGET)%을(를) 촬영하고자
+		PRINTL 구경꾼들의 카메라 셔터음이 연속으로 울렸다.
+		IF TALENT:음란 || ABL:노출벽 >= 3
+			PRINTFORML 나체를 포착당하는 것에, %PRINT_TRANSCALLNAME(TARGET)%은(는) 형언할 수 없는 흥분을 기억해 버렸다.
+		ELSE
+			PRINTL 남에게 보여줄 리도 없던 자신의 나체를 변태 구경꾼들에게 실컷 포착당하여,
+			PRINTFORML %PRINT_TRANSCALLNAME(TARGET)%은(는) 수치심을 참지 못해 얼굴이 새빨갛게 되고 말았다.
+		ENDIF
+		IF STAIN:3 & 4 || STAIN:4 & 4
+			PRINTL 고간으로부터 안쪽에 부어졌던 정액이 흘러 나오는 모습이, 카메라 필름에 확실하게 담겨져 버렸다・・・
+		ELSE
+			PRINTL 다리를 벌렸을 때 노출된 음부가, 카메라 필름에 확실하게 담겨져 버렸다・・・
+		ENDIF
+	ENDIF
+
+ELSEIF RAND:100 < 35
+	IF RAND:3 == 0
+		PRINTFORML %PRINT_TRANSCALLNAME(TARGET)%은(는) 미처 도망치지 못한 일반인을 향해 날아오는 공격을 막아냈다・・・
+		LOCAL = RAND:(FLAG:70 + FLAG:71)
+		IF RAND:100 < 20 && LOCAL > 0
+			PRINTL 
+			LOCAL = 1
+			FLAG:853 += LOCAL
+			PRINTFORML 인기도가 {LOCAL} 상승했다!
+		ENDIF
+	ELSEIF RAND:2 == 0
+		PRINT 피난 중인 일반인
+		SIF FLAG:70 + FLAG:71 > 1
+			PRINT 들
+		PRINTFORML 이 %PRINT_TRANSCALLNAME(TARGET)%의 공방을 마른침을 삼키며 지켜보고 있었다・・・
+	ELSE
+		PRINTFORML %PRINT_TRANSCALLNAME(TARGET)%이(가) 적의 위협적인 공격을 하나하나 막아내는 모습에,
+		PRINTL 관중들 사이에서는 조용히 긴장감이 흐르고 있었다・・・
+	ENDIF
+ENDIF
+
+;----------------------------------------------------------------------------------------------------------------------------
 ;촉수가 성행위를 했을 때의 처리
 @PERFORM_CHEERS_TENTACLE_SEX_HANTEI
 VARSET LOCAL
