@@ -343,7 +343,7 @@ SIF GETBIT(TCVAR:216, 1) && TALENT:공중전서툼 && ARGS != "HURIHODOKU"
 	LOCAL:5 -= GET_AIR_STRIKE(3)
 ;반격, 강화 반격의 직격 보너스
 SIF TCVAR:2 == 자세：반격
-	LOCAL:5 += 15
+	LOCAL:5 += 10
 SIF TCVAR:2 == 자세：강화반격
 	LOCAL:5 += 20
 ;버스트 공격에 의한 직격률 수정
@@ -375,7 +375,7 @@ IF FLAG:999 == 1 && ARG == 0
 		PRINTFORML 캐릭터의 지성 {MAXBASE:지성} {CHISEI_COR}
 	PRINTFORML 적의 민첩　 {LOCAL:3}
 	SIF TCVAR:2 == 자세：반격
-		PRINTL 반격 직격률 보너스 ＋15％
+		PRINTL 반격 직격률 보너스 ＋10％
 	SIF TCVAR:2 == 자세：강화반격
 		PRINTL 강화 반격 직격률 보너스 ＋20％
 	IF ARGS == "HURIHODOKU"
