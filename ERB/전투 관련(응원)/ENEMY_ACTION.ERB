@@ -993,6 +993,12 @@ IF TCVAR:0 > 0
 			SIF BASE:기력 - (LOCAL:2) <= 0
 				LOCAL:2 = BASE:기력
 			BASE:기력 -= LOCAL:2
+
+			;과잉 축적 5%마다 피로도가 2씩 상승한다
+			FOR RESULT, RESULT, 0, 5
+				TFLAG:99 += 2
+			NEXT
+
 		ENDIF
 	ENDIF
 	
